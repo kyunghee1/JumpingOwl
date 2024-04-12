@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 574a991b232f11846957afd7b5bf8f72
+guid: dd3baa6c19717bc46b990b0bc4714e0b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: owl_0
+      name: gift_0
       rect:
         serializedVersion: 2
-        x: 58
+        x: 0
         y: 0
-        width: 140
-        height: 199
+        width: 127
+        height: 114
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4c423aefcd97ee042ae851696f66a937
-      internalID: 2030209876
+      spriteID: 704222a1b4afe944fadb10eb1f3a5063
+      internalID: 1437393538
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: owl_1
+      name: gift_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 128
         y: 0
-        width: 256
-        height: 199
+        width: 128
+        height: 114
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,8 +158,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7b8a0c98f7e28cd4093de6946db5b872
-      internalID: 84661746
+      spriteID: 006d66e2a973e7549ae77208468cdb20
+      internalID: -421224485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: gift_2
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 128
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a989c4b42c19cb94192f04544036ba02
+      internalID: -315809079
       vertices: []
       indices: 
       edges: []
@@ -175,8 +196,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      owl_0: 2030209876
-      owl_1: 84661746
+      gift_0: 1437393538
+      gift_1: -421224485
+      gift_2: -315809079
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
