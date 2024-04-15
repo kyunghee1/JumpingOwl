@@ -7,7 +7,11 @@ using UnityEngine.SceneManagement;
 
 [RequireComponent (typeof(AudioSource))]
 public class GameManager : MonoBehaviour
-{
+{ 
+    AudioSource music;           //배경 및 게임 오버 음악
+    Transform spPoint;           //SpawnPoint
+    Vector3 wrdSize;             //화면의 크기(월드좌표)
+
     Transform owl;               //Owl
 
     Image pnButton;              //Button Panel
@@ -29,10 +33,6 @@ public class GameManager : MonoBehaviour
 
     int dir;                     //-1: 왼쪽버튼, 1: 오른쪽 버튼
     bool isOver;                 //게임오버인가?
-    AudioSource music;           //배경 및 게임 오버 음악
-    Transform spPoint;           //SpawnPoint
-    Vector3 wrdSize;             //화면의 크기(월드좌표)
-
     void Awake()
     {
         InitGame();
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         //Movile Device인가?
         isMobile = Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer;
 
-        //isMobile = true;        //Mobile 상태로 전환
+        isMobile = true;        //Mobile 상태로 전환
 
         Cursor.visible = isMobile;
 
@@ -59,11 +59,11 @@ public class GameManager : MonoBehaviour
         pnOver.gameObject.SetActive(false);
 
         //Scpre Text
-        //txtHeight = GameObject.Find("TxtHeight").GetComponent<Text>();
-        //txtGift = GameObject.Find("TxtGift").GetComponent<Text>();
+        txtHeight = GameObject.Find("TxtHeight").GetComponent<Text>();
+        txtGift = GameObject.Find("TxtGift").GetComponent<Text>();
 
-        //txtBird = GameObject.Find("TxtBird").GetComponent<Text>();
-        //txtScore = GameObject.Find("TxtScore").GetComponent<Text>();
+        txtBird = GameObject.Find("TxtBird").GetComponent<Text>();
+        txtScore = GameObject.Find("TxtScore").GetComponent<Text>();
 
         //Owl
         owl = GameObject.Find("Owl").transform;
@@ -107,39 +107,50 @@ public class GameManager : MonoBehaviour
     void SetScore()
     {
         //올빼미의 최대 높이 계산
-        if(owl.position.y > owlHeight)
+        if (owl.position.y > owlHeight)
         {
             owlHeight = owl.position.y;
         }
         score = Mathf.FloorToInt(owlHeight) * 100 + giftScore - birdCnt * 100;
 
         //화면표시
-        //txtHeight.text = owlHeight.ToString("#, ##0.0");
-        //txtGift.text = giftCnt.ToString();
-       // txtBird.text = birdCnt.ToString();
-       // txtScore.text = score.ToString("#, ##0");
+        txtHeight.text = owlHeight.ToString("#, ##0.0");
+        txtGift.text = giftCnt.ToString();
+        txtBird.text = birdCnt.ToString();
+        txtScore.text = score.ToString("#, ##0");
 
     }
+    void MakeBranch()
+    {
+        //나뭇가지의 개수 구하기
+        int cnt = GameObject.FindGameObjectsWithTag("Branch").Length;  //FomdGameObjectsWithTag()는 Tag가 같은 오브젝트를 배열로 구함. 오브젝트 하나를 구하는함수는
+        if (cnt > 3) return;                                           //FindGameObjectWithTag()다
+
+        //SpawnPoint 높이에 지그재그로 배치
+        Vector3 pos = spPoint.position;
+        pos.x = Random.Range(-wrdSize.x * 0.5f, wrdSize.x * 0.5f);     //화면의 좌우 절반을 범위로 한다. 월드 좌표는 화면의 중앙이 (0, 0, 0)
+
+        //나뭇가지
+        GameObject branch = Instantiate(Resources.Load("Branch")) as GameObject;
+        branch.transform.position = pos;
+
+        //SPawnPoint 를 위로 이동
+        spPoint.position += new Vector3(0, 3, 0);                      //Vector는 개별적인 값을 할당할 수 없으므로 텍터 연산으로 처리
+    }
+
     //참새만들기
     void MakeBird()
     {
         //참새 수 구하기
         int cnt = GameObject.FindGameObjectsWithTag("Bird").Length;
-        if (cnt > 7 || Random.Range(0, 1000) < 980) return;
+        if (cnt > 7 || Random.Range(0, 1000) < 980) return;         //매 프레임마다 20/ 1000의 확률로 참새 생성
 
         Vector3 pos = spPoint.position;
-        pos.y -= Random.Range(0, 5f);
+        pos.y -= Random.Range(0, 5f);                              //초기 위치는 SpawnPoint의 0~5 정도 아래
 
         GameObject bird = Instantiate(Resources.Load("Bird")) as GameObject;
         bird.transform.position = pos;
     }
-    //참새와 충돌-외부 충돌
-    void BirdStrike()
-    {
-        birdCnt++;
-    }
-
-    //선물 상자 만들기
     void MakeGift()
     {
         //선물상자 수 구하기
@@ -157,30 +168,7 @@ public class GameManager : MonoBehaviour
         gift.transform.position = pos;
     }
 
-    //선물획득-외부호출
-    void GetGift (int kind)
-    {
-        giftCnt++;
-        giftScore += (kind * 100) + 100;
-    }
-    void MakeBranch()
-    {
-        //나뭇가지의 개수 구하기
-        int cnt = GameObject.FindGameObjectsWithTag("Branch").Length;
-        if (cnt > 3) return;
-
-        //SpawnPoint 높이에 지그재그로 배치
-        Vector3 pos = spPoint.position;
-        pos.x = Random.Range(-wrdSize.x * 0.5f, wrdSize.x * 0.5f);
-
-        //나뭇가지
-        GameObject branch = Instantiate(Resources.Load("Branch")) as GameObject;
-        branch.transform.position = pos;
-
-        //SPawnPoint 를 위로 이동
-        spPoint.position += new Vector3(0, 3, 0);
-    }
-
+    //선물 상자 만들기
     //나뭇가지 초기화
     void InitBranch()
     {
@@ -195,7 +183,7 @@ public class GameManager : MonoBehaviour
         transform.localScale = new Vector3(sx * x, y, 1);
     }
 
-    public void OnButtonClick(GameObject button)
+    public void OnButtonClick(GameObject button)  //버튼클릭 이벤트
     {
         switch(button.name)
         {
@@ -253,10 +241,31 @@ public class GameManager : MonoBehaviour
             }
 
             //선형보간
-            btnAxis = Mathf.MoveTowards(btnAxis, dir, 3 * Time.deltaTime);
+            btnAxis = Mathf.MoveTowards(btnAxis, dir, 3 * Time.deltaTime);  //MoveTowards()는 Lerp()와 같은 기능의 함수
             yield return new WaitForFixedUpdate();
         }
     }
-  
+    //선물획득-외부호출
+    void GetGift(int kind)
+    {
+        giftCnt++;
+        giftScore += (kind * 100) + 100;
+    }
+    //참새와 충돌-외부 충돌
+    void BirdStrike()
+    {
+        birdCnt++;
+    }
+    //게임 오버 -외부호출
+    void SetGameOver()
+    {
+        isOver = true;
+        pnOver.gameObject.SetActive(true);
+        Cursor.visible = true;
 
+        //배경음악 바꾸기
+        music.clip = Resources.Load("gameover", typeof(AudioClip)) as AudioClip;
+        music.loop = false;
+        music.Play();
+    }
 }

@@ -14,14 +14,15 @@ public class Owl : MonoBehaviour
     Vector3 moveDir;       //이동방향과 속도
     bool isDead = false;   //사망?
 
-    public GameManager manager;
+   public GameManager manager;
     void Start()
     {
-        manager = FindObjectOfType<GameManager>();
         anim = GetComponent<Animator>();
         chkPoint = transform.Find("CheckPoint");
+        manager = FindObjectOfType<GameManager>();
+        //manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+       
     }
-
 
     void Update()
     {
@@ -29,6 +30,34 @@ public class Owl : MonoBehaviour
 
         CheckBranch();    //나뭇가지 조사
         MoveOwl();        //올빼미 이동
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            //왼쪽 버튼: 하강
+            anim.SetFloat("Velocity", -1);
+        }
+        if(Input.GetButtonDown("Fire2"))
+        {
+            //왼쪽버튼: 상승
+            anim.SetFloat("Velocity", 1);
+        }
+      
+    }
+
+    //나뭇가지 조사
+    void CheckBranch()
+    {
+        //CheckPoint 에서 아래쪽으로 0.1m 이내 조사
+        RaycastHit2D hit = Physics2D.Raycast(chkPoint.position, Vector2.down, 0.2f);
+
+        //디버그 출력
+        Debug.DrawRay(chkPoint.position, Vector2.down * 1f, Color.blue);
+
+        //조사한 물체가 나뭇가지이면 점프 속도 설정
+        if (hit.collider != null && hit.collider.tag == "Branch")
+        {
+            moveDir.y = jumpSpeed;
+        }
     }
 
     //올빼미 이동
@@ -36,9 +65,11 @@ public class Owl : MonoBehaviour
     {
         //올빼미가 화면 아래를 벗어났나?
         Vector2 pos = Camera.main.WorldToScreenPoint(transform.position);
+
         if(pos.y < -100)
         {
             isDead = true;
+            manager.SendMessage("SetGameOver");
             return;
         }
 
@@ -58,7 +89,7 @@ public class Owl : MonoBehaviour
 
         //출력
         moveDir.y -= gravity * Time.deltaTime;
-        moveDir.y = 0;
+        //moveDir.y = 0;
 
         //이동
         transform.Translate(moveDir * Time.deltaTime);
@@ -67,21 +98,7 @@ public class Owl : MonoBehaviour
         anim.SetFloat("velocity", moveDir.y);
     }
 
-    //나뭇가지 조사
-    void CheckBranch()
-    {
-        //CheckPoint 에서 아래쪽으로 0.1m 이내 조사
-        RaycastHit2D hit = Physics2D.Raycast(chkPoint.position, Vector2.down, 0.2f);
-
-        //디버그 출력
-        Debug.DrawRay(chkPoint.position, Vector2.down * 1f, Color.blue);
-
-        //조사한 물체가 나뭇가지이면 점프 속도 설정
-        if(hit.collider != null && hit.collider.tag == "Branch")
-        {
-            moveDir.y = jumpSpeed;
-        }
-    }
+    //총돌 판정 및 처리
     private void OnTriggerEnter2D(Collider2D coll)
     {
         Transform other = coll.transform;
@@ -96,4 +113,5 @@ public class Owl : MonoBehaviour
                 break;
         }
     }
+ 
 }
