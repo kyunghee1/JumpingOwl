@@ -1,22 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
+
+
+
 
 public class Gift : MonoBehaviour
 {
-    private GameObject[] gifts;
-    int kind;
+    public GameObject giftPrefab;
+    public Sprite[] giftSprites;
+    
     void Start()
     {
-        InitGift();
-        if (gifts == null || gifts.Length == 0)
-        {
-            Debug.LogError("Gift 배열이 초기화되지 않았습니다.");
-            return; //배열이 초기화되지 않앗을 경우 추가 오류를 방지하기 위한 조기 반환
-        }
+        SpawnRandomGift();
     }
 
-    
     void Update()
     {
         //화면을 벗어나면 제거
@@ -28,22 +27,25 @@ public class Gift : MonoBehaviour
     }
 
     //Gift 초기화
-    void InitGift()
+    void SpawnRandomGift()
     {
 
-        //Gift번호
-        kind = int.Parse(transform.name.Substring(4, 1));
-        
+        GameObject newGift = Instantiate(giftPrefab, RandomPosition(), Quaternion.identity);
+        int spriteIndex = Random.Range(0, giftSprites.Length);
+        SpriteRenderer spriteRenderer = newGift.GetComponent<SpriteRenderer>();
+        if(spriteRenderer != null)
+        {
+            spriteRenderer.sprite = giftSprites[spriteIndex];
+        }
 
-
-        //Gift Sprite 설정
-        Sprite[] sprites = Resources.LoadAll<Sprite>("gift");
-        GetComponent<SpriteRenderer>().sprite = sprites[kind];
-
+    }
+    Vector3 RandomPosition()
+    {
+        return new Vector3(Random.Range(-10.0f, 10.0f), Random.Range(1.0f, 5.0f), 0);
     }
 
     //충돌처리 , 외부호출
-    void GetGift()
+   /* void GetGift()
     {
         //GameManager 에 통지
         GameObject.Find("GameManager").SendMessage("GetGift", kind);
@@ -60,6 +62,6 @@ public class Gift : MonoBehaviour
         Destroy(gameObject, 0.5f);
 
        
-    }
+    }*/
 }
 

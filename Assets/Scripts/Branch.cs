@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Random = UnityEngine.Random;
 public class Branch : MonoBehaviour
 {
   
@@ -9,9 +9,15 @@ public class Branch : MonoBehaviour
     {
         InitBranch();
     }
-
-    
-
+    private void Update()
+    { 
+      Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
+       if(pos.y < -30)
+         {
+            Destroy(gameObject);
+         }
+        
+    }
     //나뭇가지 초기화
     void InitBranch()
     {
